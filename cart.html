@@ -1,0 +1,377 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Giỏ hàng & Thanh toán – USBAKHISO1</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="auth-guard.js?v=20261126"></script>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; color: #111; background: #fff; }
+a { color: inherit; text-decoration: none; }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.btn { border: none; cursor: pointer; padding: 12px 24px; border-radius: 999px; font-size: 14px; font-weight: 600; }
+.btn-dark { background: #111; color: #fff; width: 100%; }
+.grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 32px; padding: 32px 0; align-items: start; }
+.cart-row { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid #eee; gap: 14px; }
+.cart-row img { width: 64px; height: 64px; object-fit: contain; padding: 4px; border-radius: 10px; background: #f8fafc; border: 1px solid #e2e8f0; }
+.box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 18px; padding: 24px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 13px; font-weight: 600; color: #334155; }
+.field input, .field select, .field textarea { padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; background: #fff; font-family: inherit; }
+.bank-box { display: none; background: #eff6ff; border: 1.5px solid #93c5fd; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
+.bank-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px dashed #bfdbfe; font-size: 13px; }
+.bank-row:last-child { border-bottom: none; }
+.copy-btn { background: #1d4ed8; color: #fff; border: none; padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; margin-left: 6px; }
+.order-history { margin-top: 36px; padding-bottom: 60px; }
+.order-card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px 20px; margin-bottom: 14px; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+.badge-pill { display: inline-block; padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.btn-cancel-ord { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; padding: 7px 14px; border-radius: 999px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.btn-cancel-ord:hover { background: #fee2e2; }
+@media (max-width: 840px) { .grid { grid-template-columns: 1fr; } }
+</style>
+</head><body>
+<div id="app-header"></div>
+<main class="container">
+  <!-- Thông báo đặt hàng thành công nổi bật ngay sau khi bấm Đặt hàng -->
+  <div id="orderSuccessBanner" style="display:none;margin-top:24px;background:#f0fdf4;border:1.5px solid #86efac;border-radius:18px;padding:22px;"></div>
+
+  <div class="grid">
+    <div>
+      <h2 style="margin-bottom:16px;">Giỏ hàng của bạn</h2>
+      <div id="cartList"></div>
+    </div>
+
+    <div class="box">
+      <h3 style="margin-bottom:16px;">Thông tin đặt hàng & Thanh toán</h3>
+      <form id="checkoutForm">
+        <div class="field"><label>Họ tên người nhận *</label><input type="text" id="cName" required placeholder="Nguyễn Văn A"></div>
+        <div class="field"><label>Số điện thoại *</label><input type="tel" id="cPhone" required placeholder="0901234567"></div>
+        <div class="field"><label>Email (để theo dõi & hủy đơn) *</label><input type="email" id="cEmail" required placeholder="email@example.com"></div>
+        <div class="field"><label>Địa chỉ giao hàng *</label><input type="text" id="cAddress" required placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/TP"></div>
+        <div class="field"><label>Ghi chú đơn hàng</label><input type="text" id="cNote" placeholder="Ví dụ: Giao giờ hành chính, gọi trước khi giao..."></div>
+
+        <div class="field">
+          <label>Phương thức thanh toán *</label>
+          <select id="cPay">
+            <option value="cod">Thanh toán khi nhận hàng (COD)</option>
+            <option value="bank">Chuyển khoản ngân hàng (24/7)</option>
+          </select>
+        </div>
+
+        <!-- Khung hiển thị thông tin tài khoản ngân hàng thụ hưởng khi chọn Chuyển khoản -->
+        <div id="bankTransferInfo" class="bank-box">
+          <div style="font-weight:700;color:#1e3a8a;font-size:14px;margin-bottom:8px;">🏦 Thông tin tài khoản nhận chuyển khoản</div>
+          <div class="bank-row">
+            <span style="color:#475569;">Ngân hàng:</span>
+            <b style="color:#0f172a;">Vietcombank (CN TP.HCM)</b>
+          </div>
+          <div class="bank-row">
+            <span style="color:#475569;">Tên người nhận:</span>
+            <b style="color:#0f172a;">CONG TY TNHH CONG NGHE USBAKHISO1</b>
+          </div>
+          <div class="bank-row">
+            <span style="color:#475569;">Số tài khoản:</span>
+            <span>
+              <b id="bankAccNum" style="color:#1d4ed8;font-size:14px;font-family:monospace;">10388668899</b>
+              <button type="button" class="copy-btn" onclick="copyText('10388668899', 'Đã sao chép số tài khoản!')">Sao chép</button>
+            </span>
+          </div>
+          <div class="bank-row">
+            <span style="color:#475569;">Nội dung CK:</span>
+            <b id="bankMemoPreview" style="color:#0f172a;font-family:monospace;">USBAK [Mã đơn hàng]</b>
+          </div>
+          <div id="vietQrWrap" style="margin-top:12px;text-align:center;background:#fff;padding:10px;border-radius:10px;border:1px solid #dbeafe;">
+            <img id="vietQrImg" src="" alt="Mã QR Chuyển khoản" style="width:150px;height:150px;object-fit:contain;margin:0 auto;display:block;">
+            <div style="font-size:11px;color:#475569;margin-top:4px;">Quét mã VietQR bằng App Ngân hàng để tự động điền số tiền</div>
+          </div>
+        </div>
+
+        <div style="font-size:18px;font-weight:800;margin:16px 0;display:flex;justify-content:space-between;">
+          <span>Tổng thanh toán:</span>
+          <span id="cartTotal" style="color:#0284c7;">0 ₫</span>
+        </div>
+        <button type="submit" class="btn btn-dark">Xác nhận Đặt hàng</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="order-history" id="myOrdersSection">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+      <div>
+        <h2 style="margin-bottom:4px;">Đơn hàng đã đặt của bạn</h2>
+        <p style="font-size:13px;color:#64748b;">Xem lại chi tiết đơn hàng, trạng thái chuyển khoản hoặc hủy đơn khi chưa giao.</p>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <input type="text" id="lookupInput" placeholder="Nhập mã đơn (ORD-...) hoặc Email..." style="padding:9px 14px;border:1px solid #cbd5e1;border-radius:999px;font-size:13px;width:250px;">
+        <button type="button" onclick="manualLookupOrders()" style="padding:9px 18px;border-radius:999px;background:#111;color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;">Tra cứu đơn</button>
+      </div>
+    </div>
+    <div id="myOrders"><p style="color:#666;font-size:14px;">Chưa có đơn hàng nào được hiển thị.</p></div>
+  </div>
+</main>
+<div id="app-footer"></div>
+<script src="catalog-products.js?v=20261126"></script>
+<script src="app.js?v=20261126"></script>
+<script>
+const RECENT_ORDERS_KEY = 'usbak_recent_order_codes_v1';
+
+function getSavedOrderCodes() {
+  try { return JSON.parse(localStorage.getItem(RECENT_ORDERS_KEY) || '[]'); } catch (e) { return []; }
+}
+function saveOrderCodeLocally(code, email) {
+  const list = getSavedOrderCodes();
+  if (!list.some(x => x.code === code)) {
+    list.unshift({ code, email });
+    localStorage.setItem(RECENT_ORDERS_KEY, JSON.stringify(list.slice(0, 20)));
+  }
+}
+
+window.copyText = function (txt, msg) {
+  navigator.clipboard.writeText(txt).then(() => {
+    if (window.showToast) showToast(msg || 'Đã sao chép!', 'success');
+    else alert(msg || 'Đã sao chép!');
+  });
+};
+
+window.PAGE_INIT = function () {
+  const u = USBAK_AUTH.getUser();
+  if (u) {
+    document.getElementById('cName').value = u.name || '';
+    document.getElementById('cEmail').value = u.email || '';
+    if (u.phone) document.getElementById('cPhone').value = u.phone;
+  }
+
+  const paySelect = document.getElementById('cPay');
+  const bankBox = document.getElementById('bankTransferInfo');
+
+  function updateBankBox() {
+    const cart = USBAK_CART.getCart();
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    if (paySelect.value === 'bank') {
+      bankBox.style.display = 'block';
+      const qrUrl = `https://img.vietqr.io/image/VCB-10388668899-compact2.png?amount=${total}&addInfo=${encodeURIComponent('THANH TOAN DON HANG USBAKHISO1')}&accountName=${encodeURIComponent('CONG TY TNHH CONG NGHE USBAKHISO1')}`;
+      document.getElementById('vietQrImg').src = qrUrl;
+    } else {
+      bankBox.style.display = 'none';
+    }
+  }
+  paySelect.addEventListener('change', updateBankBox);
+
+  function renderCart() {
+    const cart = USBAK_CART.getCart();
+    const listEl = document.getElementById('cartList');
+    if (!cart.length) {
+      listEl.innerHTML = '<p style="color:#64748b;">Giỏ hàng đang trống. <a href="products.html" style="text-decoration:underline;color:#0284c7;font-weight:600;">Tiếp tục mua sắm ngay</a></p>';
+      document.getElementById('cartTotal').textContent = '0 ₫';
+      updateBankBox();
+      return;
+    }
+    let total = 0;
+    listEl.innerHTML = cart.map((item, idx) => {
+      total += item.price * item.qty;
+      return `
+        <div class="cart-row">
+          <img src="${item.img || ''}" alt="">
+          <div style="flex:1;">
+            <b>${item.name}</b><br>
+            <small style="color:#64748b;">${USBAK_CART.fmt(item.price)} x ${item.qty}</small>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <button type="button" onclick="changeQty(${idx}, -1)" style="width:28px;height:28px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">-</button>
+            <span style="min-width:20px;text-align:center;font-weight:600;">${item.qty}</span>
+            <button type="button" onclick="changeQty(${idx}, 1)" style="width:28px;height:28px;border-radius:8px;border:1px solid #cbd5e1;background:#fff;cursor:pointer;">+</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('cartTotal').textContent = USBAK_CART.fmt(total);
+    updateBankBox();
+  }
+
+  window.changeQty = function (idx, delta) {
+    const cart = USBAK_CART.getCart();
+    cart[idx].qty += delta;
+    if (cart[idx].qty <= 0) cart.splice(idx, 1);
+    USBAK_CART.saveCart(cart);
+    renderCart();
+  };
+
+  document.getElementById('checkoutForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const cart = USBAK_CART.getCart();
+    if (!cart.length) return showToast('Giỏ hàng của bạn đang trống!', 'error');
+
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const code = 'ORD-' + Math.floor(100000 + Math.random() * 900000);
+    const email = document.getElementById('cEmail').value.trim();
+    const payment = document.getElementById('cPay').value;
+
+    const res = await USBAK_AUTH.apiFetch('/api/orders', {
+      method: 'POST',
+      body: JSON.stringify({
+        code,
+        customer: {
+          name: document.getElementById('cName').value.trim(),
+          phone: document.getElementById('cPhone').value.trim(),
+          email,
+          address: document.getElementById('cAddress').value.trim(),
+          note: document.getElementById('cNote').value.trim()
+        },
+        payment,
+        items: cart,
+        subtotal,
+        discount: 0,
+        shipping: 0,
+        total: subtotal
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      saveOrderCodeLocally(code, email);
+      USBAK_CART.saveCart([]);
+      renderCart();
+
+      const banner = document.getElementById('orderSuccessBanner');
+      banner.style.display = 'block';
+      const bankNotice = payment === 'bank' ? `
+        <div style="margin-top:14px;background:#fff;border:1px solid #93c5fd;border-radius:12px;padding:14px;">
+          <div style="font-weight:700;color:#1e3a8a;margin-bottom:6px;">Vui lòng hoàn tất chuyển khoản với thông tin sau:</div>
+          <div style="font-size:13px;line-height:1.7;">
+            • Ngân hàng: <b>Vietcombank (CN TP.HCM)</b><br>
+            • Tên người nhận: <b>CONG TY TNHH CONG NGHE USBAKHISO1</b><br>
+            • Số tài khoản: <b style="color:#1d4ed8;font-family:monospace;">10388668899</b> <button type="button" class="copy-btn" onclick="copyText('10388668899', 'Đã sao chép STK!')">Sao chép STK</button><br>
+            • Số tiền: <b style="color:#dc2626;">${USBAK_CART.fmt(subtotal)}</b><br>
+            • Nội dung chuyển khoản: <b style="color:#111;font-family:monospace;">USBAK ${code}</b> <button type="button" class="copy-btn" onclick="copyText('USBAK ${code}', 'Đã sao chép nội dung CK!')">Sao chép nội dung</button>
+          </div>
+        </div>
+      ` : '<p style="font-size:13.5px;color:#166534;margin-top:6px;">Phương thức: <b>Thanh toán tiền mặt khi nhận hàng (COD)</b>.</p>';
+
+      banner.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:start;gap:12px;">
+          <div>
+            <div style="font-size:18px;font-weight:800;color:#15803d;">🎉 Đặt hàng thành công! Mã đơn: ${code}</div>
+            <p style="font-size:13.5px;color:#166534;margin-top:4px;">Bạn có thể theo dõi trạng thái hoặc hủy đơn hàng ngay bên dưới.</p>
+            ${bankNotice}
+          </div>
+          <button type="button" onclick="document.getElementById('orderSuccessBanner').style.display='none'" style="background:none;border:none;font-size:22px;cursor:pointer;color:#166534;">&times;</button>
+        </div>
+      `;
+      banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      loadAllMyOrders();
+    } else {
+      showToast(data.error || 'Lỗi đặt hàng', 'error');
+    }
+  });
+
+  function renderOrderCards(orders) {
+    const box = document.getElementById('myOrders');
+    if (!orders || !orders.length) {
+      box.innerHTML = '<p style="color:#64748b;font-size:14px;">Chưa có đơn hàng nào. Hãy đặt hàng hoặc nhập mã đơn/email để tra cứu.</p>';
+      return;
+    }
+    box.innerHTML = orders.map(o => {
+      const canCancel = !['Đang giao hàng', 'Hoàn thành', 'Đã hủy'].includes(o.status);
+      const statusColor = o.status === 'Đã hủy' ? '#fee2e2;color:#b91c1c'
+        : o.status === 'Hoàn thành' ? '#dcfce7;color:#15803d'
+        : o.status === 'Đã duyệt' ? '#e0f2fe;color:#0369a1'
+        : '#fef3c7;color:#92400e';
+
+      const payBadgeColor = o.payment_status === 'Đã chuyển khoản thành công' ? '#dcfce7;color:#15803d'
+        : o.payment_status === 'Chuyển khoản thất bại' ? '#fee2e2;color:#b91c1c'
+        : '#f1f5f9;color:#334155';
+
+      const dateStr = o.created_at ? new Date(o.created_at).toLocaleString('vi-VN') : '';
+
+      return `
+        <div class="order-card">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding-bottom:10px;border-bottom:1px solid #f1f5f9;margin-bottom:10px;">
+            <div>
+              <b style="font-size:15px;">Mã đơn: ${o.code}</b>
+              <span style="font-size:12px;color:#64748b;margin-left:8px;">${dateStr}</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+              <span class="badge-pill" style="background:${payBadgeColor};">💳 ${o.payment_status || (o.payment_method === 'bank' ? 'Chờ xác nhận CK' : 'COD')}</span>
+              <span class="badge-pill" style="background:${statusColor};">📦 ${o.status}</span>
+            </div>
+          </div>
+
+          <div style="font-size:13px;color:#334155;line-height:1.6;margin-bottom:10px;">
+            ${(o.items || []).map(i => `<div>• <b>${i.name}</b> — SL: ${i.qty} × ${USBAK_CART.fmt(i.price)}</div>`).join('')}
+          </div>
+
+          <div style="font-size:12.5px;color:#64748b;margin-bottom:12px;">
+            Người nhận: <b>${o.customer?.name || ''}</b> (${o.customer?.phone || ''}) • Địa chỉ: ${o.customer?.address || ''}
+            ${o.customer?.note ? `<br>Ghi chú: <i>${o.customer.note}</i>` : ''}
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <div style="font-size:15px;">Tổng cộng: <b style="color:#0284c7;font-size:16px;">${USBAK_CART.fmt(o.total)}</b></div>
+            ${canCancel
+              ? `<button type="button" class="btn-cancel-ord" onclick="cancelMyOrder('${o.code}', '${(o.customer?.email || '').replace(/'/g, '')}')">✕ Hủy đơn hàng</button>`
+              : `<span style="font-size:12px;color:#94a3b8;">${o.status === 'Đã hủy' ? 'Đơn hàng đã được hủy' : 'Đơn hàng đang xử lý/giao, không thể hủy'}</span>`
+            }
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async function loadAllMyOrders() {
+    const map = new Map();
+    // 1. Lấy đơn theo tài khoản đang đăng nhập
+    if (USBAK_AUTH.getToken()) {
+      try {
+        const res = await USBAK_AUTH.apiFetch('/api/orders');
+        const data = await res.json();
+        if (data.ok && data.orders) {
+          data.orders.forEach(o => map.set(o.code, o));
+        }
+      } catch (e) {}
+    }
+    // 2. Lấy thêm các đơn vừa đặt trên trình duyệt này (kể cả chưa đăng nhập)
+    const localCodes = getSavedOrderCodes();
+    for (const item of localCodes) {
+      if (!map.has(item.code)) {
+        try {
+          const r = await fetch('/api/orders/lookup?code=' + encodeURIComponent(item.code));
+          const d = await r.json();
+          if (d.ok && d.orders) d.orders.forEach(o => map.set(o.code, o));
+        } catch (e) {}
+      }
+    }
+    const merged = Array.from(map.values()).sort((a, b) => (b.created_at || 0) - (a.created_at || 0));
+    renderOrderCards(merged);
+  }
+
+  window.manualLookupOrders = async function () {
+    const q = document.getElementById('lookupInput').value.trim();
+    if (!q) return loadAllMyOrders();
+    const param = q.includes('@') ? 'email=' + encodeURIComponent(q) : 'code=' + encodeURIComponent(q);
+    const res = await fetch('/api/orders/lookup?' + param);
+    const data = await res.json();
+    if (data.ok) {
+      renderOrderCards(data.orders);
+    }
+  };
+
+  window.cancelMyOrder = async function (code, ownerEmail) {
+    const reason = prompt(`Bạn chắc chắn muốn hủy đơn hàng ${code}?\nVui lòng nhập lý do hủy đơn (tùy chọn):`, 'Đổi ý / Muốn chọn phiên bản khác');
+    if (reason === null) return;
+
+    const emailToSend = (USBAK_AUTH.getUser()?.email) || ownerEmail || document.getElementById('cEmail').value.trim();
+    const res = await USBAK_AUTH.apiFetch('/api/orders/' + encodeURIComponent(code) + '/cancel', {
+      method: 'POST',
+      body: JSON.stringify({ email: emailToSend, reason })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      showToast('Đã hủy đơn hàng ' + code + ' thành công!', 'success');
+      loadAllMyOrders();
+    } else {
+      showToast(data.error || 'Không thể hủy đơn hàng này', 'error');
+    }
+  };
+
+  renderCart();
+  loadAllMyOrders();
+};
+</script>
+</body></html>
