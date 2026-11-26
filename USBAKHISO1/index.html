@@ -1,0 +1,223 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<title>USBAKHISO1 – Giải pháp công nghệ tối giản</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="custom.css">
+<script src="auth-guard.js?v=20261126"></script>
+<style>
+/* ============ RESET & BIẾN ============ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --black: #111111;
+  --dark: #1b1b1b;
+  --gray-bg: #f0f0f0;
+  --gray-line: #e2e2e2;
+  --gray-text: #777;
+  --radius: 16px;
+  --container: 1200px;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', 'Segoe UI', Roboto, Arial, sans-serif;
+  color: var(--black);
+  background: #fff;
+  line-height: 1.5;
+  font-size: 16px;
+}
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+button, input, select { font-family: inherit; }
+.container { max-width: var(--container); margin: 0 auto; padding: 0 24px; }
+.icon { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ============ NÚT ============ */
+.btn {
+  display: inline-block; border: none; cursor: pointer;
+  padding: 12px 28px; border-radius: 999px; font-size: 14px; font-weight: 600;
+  transition: .2s;
+}
+.btn-dark { background: var(--black); color: #fff; }
+.btn-dark:hover { background: #333; }
+.btn-outline { background: #fff; color: var(--black); border: 1px solid #bbb; font-weight: 500; font-size: 13px; }
+.btn-outline:hover { background: var(--black); color: #fff; border-color: var(--black); }
+
+/* ============ HEADER ============ */
+.header { background: #fff; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid var(--gray-line); }
+.header .container { display: flex; align-items: center; gap: 36px; height: 80px; }
+.logo { font-weight: 800; font-size: 20px; letter-spacing: 1px; }
+.logo img { height: 44px; width: auto; }
+.nav { display: flex; gap: 32px; font-size: 14px; font-weight: 500; }
+.nav a { padding: 6px 0; border-bottom: 2px solid transparent; }
+.nav a:hover, .nav a.active { border-color: var(--black); }
+.search {
+  flex: 1; max-width: 420px; display: flex; align-items: center; gap: 10px;
+  background: var(--gray-bg); border-radius: 12px; padding: 0 16px; height: 44px; color: #666;
+}
+.search input { flex: 1; border: none; background: transparent; outline: none; font-size: 14px; height: 100%; }
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 18px; font-size: 14px; font-weight: 500; }
+.cart-btn { position: relative; display: flex; }
+.cart-count {
+  position: absolute; top: -8px; right: -10px; background: var(--black); color: #fff;
+  font-size: 10px; min-width: 17px; height: 17px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-login { background: var(--black); color: #fff; padding: 10px 22px; border-radius: 999px; font-weight: 600; font-size: 13px; cursor: pointer; border: none; }
+.btn-login:hover { background: #333; }
+
+/* ============ HERO ============ */
+.hero {
+  background: var(--gray-bg); border-radius: 20px; margin-top: 16px;
+  display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+  padding: 16px 16px 16px 60px; min-height: 380px; gap: 30px;
+}
+.hero-text .tag { font-size: 13px; max-width: 310px; margin-bottom: 20px; color: #444; }
+.hero-text h1 { font-size: 36px; line-height: 1.2; margin-bottom: 14px; }
+.hero-text p { color: var(--gray-text); font-size: 14px; margin-bottom: 28px; }
+.hero-img {
+  background: #e4e4e4; border-radius: 16px; height: 348px;
+  display: flex; align-items: center; justify-content: center; color: #aaa;
+  flex-direction: column; gap: 10px; font-size: 13px; overflow: hidden;
+}
+.hero-img img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ============ TIÊU ĐỀ MỤC ============ */
+.section { padding-top: 64px; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 26px; }
+.section-title { font-size: 26px; font-weight: 600; letter-spacing: -.3px; }
+.view-all { font-size: 13px; font-weight: 500; }
+.view-all:hover { text-decoration: underline; }
+
+/* ============ DANH MỤC ============ */
+.categories { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.cat-card {
+  background: var(--gray-bg); border-radius: var(--radius); height: 76px;
+  display: flex; align-items: center; padding: 0 30px; gap: 16px;
+  font-size: 15px; font-weight: 500; transition: .2s;
+}
+.cat-card:hover { background: var(--black); color: #fff; transform: translateY(-3px); }
+
+/* ============ SẢN PHẨM ============ */
+.product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.product-card { display: flex; flex-direction: column; }
+.product-card .thumb {
+  background: var(--gray-bg); border-radius: var(--radius); aspect-ratio: 1 / .85;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 14px; overflow: hidden;
+  color: #b5b5b5; padding: 12px;
+}
+.product-card .thumb img { width: 100%; height: 100%; object-fit: cover; border-radius: 10px; transition: transform .25s; }
+.product-card:hover .thumb img { transform: scale(1.04); }
+.product-card h3 { font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.product-card .desc { font-size: 12px; color: var(--gray-text); margin-bottom: 12px; flex: 1; }
+.product-card .price { font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+.product-card .btn-outline { width: 100%; padding: 10px; }
+
+/* ============ FOOTER ============ */
+.footer { background: var(--dark); color: #fff; margin-top: 80px; padding: 48px 0 0; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 40px; padding-bottom: 40px; }
+.footer p, .footer li { font-size: 13px; color: #ddd; line-height: 1.9; }
+.footer h4 { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
+.copyright { border-top: 1px solid #3a3a2a; text-align: center; font-size: 12px; color: #ddd; padding: 22px 0 26px; }
+
+/* ============ MODAL ĐĂNG NHẬP ============ */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 150; padding: 16px; }
+.modal-card { background: #fff; border-radius: 20px; width: 100%; max-width: 420px; padding: 28px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+.modal-card h2 { font-size: 22px; margin-bottom: 6px; }
+.modal-card p { font-size: 13px; color: var(--gray-text); margin-bottom: 18px; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field label { font-size: 13px; font-weight: 500; }
+.field input { border: 1px solid #d0d0d0; border-radius: 10px; padding: 11px 14px; font-size: 14px; outline: none; }
+.field input:focus { border-color: var(--black); }
+.user-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--gray-bg); padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 500; }
+.admin-badge { background: #111; color: #fff; font-size: 11px; padding: 3px 10px; border-radius: 999px; }
+
+@media (max-width: 1000px) {
+  .hero { grid-template-columns: 1fr; padding: 30px; }
+  .categories, .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 560px) {
+  .categories, .product-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head><body>
+<div id="app-header" data-page-name="index"></div>
+<main class="container">
+<section class="hero">
+  <div class="hero-text">
+    <p class="tag">Dành cho sinh viên – Trợ giá học tập, bảo hành 1 đổi 1 và thu cũ đổi mới linh hoạt.</p>
+    <h1>Giải pháp công nghệ tối giản</h1>
+    <p>Hoàn thiện góc làm việc tối giản với hệ sinh thái Apple, Samsung, Xiaomi, ASUS & Dell!</p>
+    <a href="products.html" class="btn btn-dark">Khám phá ngay (107 sản phẩm)</a>
+  </div>
+  <div class="hero-img">
+    <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1000&q=80" alt="USBAKHISO1 Workspace">
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title" style="margin-bottom:26px">Tìm điều bạn cần.</h2>
+  <div class="categories">
+    <a href="products.html?cat=laptop" class="cat-card">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></svg>Laptop (MacBook, ASUS, Dell)
+    </a>
+    <a href="products.html?cat=dien-thoai" class="cat-card">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg>Điện thoại (iPhone, Samsung, Xiaomi)
+    </a>
+    <a href="products.html?cat=tablet" class="cat-card">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><circle cx="12" cy="19" r=".6"/></svg>Máy tính bảng (iPad, Galaxy Tab)
+    </a>
+    <a href="products.html?cat=tai-nghe" class="cat-card">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M3 14v-3a9 9 0 0 1 18 0v3"/><rect x="3" y="13" width="5" height="8" rx="2"/><rect x="16" y="13" width="5" height="8" rx="2"/></svg>Tai nghe (AirPods, Galaxy Buds)
+    </a>
+    <a href="products.html?cat=phu-kien" class="cat-card">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="7" rx="1.5"/><rect x="17" y="14" width="4" height="7" rx="1.5"/></svg>Phụ kiện chính hãng
+    </a>
+    <a href="admin.html" class="cat-card" id="adminQuickCard" style="display:none; background:#111; color:#fff;">
+      <svg class="icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Trang Quản Trị Admin
+    </a>
+  </div>
+</section>
+
+
+<section class="section">
+  <div style="background:linear-gradient(135deg,#0f172a,#1e293b);color:#fff;border-radius:20px;padding:28px 36px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;">
+    <div>
+      <span style="background:#f59e0b;color:#111;font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;">TÍNH NĂNG ĐỘC QUYỀN</span>
+      <h2 style="font-size:22px;margin:8px 0 6px;">🔐 Két sắt 24h & ⇄ Bảng so sánh thông minh</h2>
+      <p style="font-size:13.5px;color:#cbd5e1;">Đóng băng giá giảm 5% trong 24 giờ cho mọi sản phẩm hoặc đặt tối đa 3 thiết bị lên bàn cân so sánh cấu hình.</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="vault.html" class="btn" style="background:#f59e0b;color:#111;">Mở Két sắt 24h</a>
+      <a href="compare.html" class="btn" style="background:#fff;color:#111;">Xem bảng so sánh</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <h2 class="section-title">Sản phẩm nổi bật (107 SKU).</h2>
+    <a href="products.html" class="view-all">Xem tất cả sản phẩm →</a>
+  </div>
+  <div class="product-grid" id="featured"></div>
+</section>
+</main>
+<div id="app-footer"></div>
+
+<script src="catalog-products.js?v=20261126"></script>
+<script src="app.js?v=20261126"></script>
+<script>
+window.PAGE_INIT = function () {
+  var u = window.USBAK_AUTH && window.USBAK_AUTH.getUser();
+  if (u && u.role === 'admin') {
+    var card = document.getElementById('adminQuickCard');
+    if (card) card.style.display = 'flex';
+  }
+  var featuredEl = document.getElementById('featured');
+  if (featuredEl && Array.isArray(window.PRODUCTS)) {
+    featuredEl.innerHTML = window.PRODUCTS.slice(0, 8).map(function (p) {
+      return typeof cardHTML === 'function' ? cardHTML(p, false) : '';
+    }).join('');
+  }
+};
+</script>
+</body></html>

@@ -1,0 +1,11 @@
+{
+  "name": "usbakhiso1-store",
+  "version": "1.0.0",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}
